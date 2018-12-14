@@ -7,9 +7,9 @@ use Hackathon\Game\Result;
 /**
  * Class LovePlayer
  * @package Hackathon\PlayerIA
- * @author FlorentD
+ * @author Totokh
  */
-class FriendPlayer extends Player
+class TotokhPlayer extends Player
 {
     protected $mySide;
     protected $opponentSide;
@@ -40,8 +40,49 @@ class FriendPlayer extends Player
         // -------------------------------------    -----------------------------------------------------
         // How can i display the result of each round ? $this->prettyDisplay()
         // -------------------------------------    -----------------------------------------------------
- 
-        return parent::friendChoice();
+        $mylast = $this->result->getLastChoiceFor($this->mySide);
+        $hislast = $this->result->getLastChoiceFor($this->opponentSide);
+        $myscore = $this->result->getLastScoreFor($this->mySide);
+        $hisscore = $this->result->getLastScoreFor($this->opponentSide);
+        $nb_rnd = $this->result->getNbRound();
+        $my_log = $this->result->getChoicesFor($this->mySide);
+        $opp_log = $this->result->getChoicesFor($this->opponentSide);
+        $stats = $this->result->getStats(); //name friend foe score; number of times N choice is made
+
+        //print($nb_rnd);
+        //print_r($my_log);
+        //print($stats["a"]["friend"]);
+        //print($stats["a"]["foe"]);
+
+        //first round
+        if ($mylast == "0" || $nb_rnd == 2)
+            return parent::friendChoice();
+        //last round
+        if ($nb_rnd == 98)
+            return parent::foeChoice();
+
+        //only does friend uptonow
+        if ($stats["a"]["foe"] == 0 && $nb_rnd > 3) //($stats["a"]["friend"] > $stats["a"]["foe"])
+            return parent::foeChoice(); //PIGEON
+
+
+        if ($nb_rnd % 2 == 1) //AT LEAST FRIEND INCONDITIONALLY ONCE OUT OF TWO to make him trust me,
+            // and I lose nothing this way (unless hes a pigeon but this was detected previous line
+            //Social strategy because most of them are doing if he just did friend, I friend, else I enemy
+            return parent::friendChoice();
+        else
+            return parent::foeChoice();
+
+//if he is ahead, it means he is trying to get the best of me
+        if ($myscore < $hisscore)
+            return parent::foeChoice();
+
+        //was just friend TWICE
+        //if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice())
+            //return parent::friendChoice();
+
+        //else just did foe previous and globally hes not worth trusting
+        return parent::foeChoice();
     }
- 
+
 };
