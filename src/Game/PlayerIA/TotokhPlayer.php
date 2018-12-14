@@ -55,27 +55,25 @@ class TotokhPlayer extends Player
         //print($stats["a"]["foe"]);
 
         //first round
-        if ($mylast == "0")
+        if ($mylast == "0" || $nb_rnd == 1)
             return parent::friendChoice();
-        if ($nb_rnd % 2 == 1)
-            return parent::foeChoice(); //At least foe once out of two times
-        /* This is for test
-        //last round(s)
-        //if ($nb_rnd > 8) {
-            //return parent::foeChoice();
-        //}
-        */
+        //last round
+        if ($nb_rnd == 98)
+            return parent::foeChoice();
+
+        //only does friend uptonow
+        //if ($stats["a"]["foe"] == 0 && $nb_rnd > 80) //($stats["a"]["friend"] > $stats["a"]["foe"])
+            //return parent::foeChoice(); //PIGEON
+
         //if he is ahead, it means he is trying to get the best of me
         if ($myscore < $hisscore)
             return parent::foeChoice();
 
         //was just friend TWICE
-        if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2])
+        if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice())
             return parent::friendChoice();
 
-        //only does friend uptonow
-        if ($stats["a"]["foe"] == 0)//($stats["a"]["friend"] > $stats["a"]["foe"])
-            return parent::friendChoice();
+        //else just did foe previous and globally hes not worth trusting
         return parent::foeChoice();
     }
 
