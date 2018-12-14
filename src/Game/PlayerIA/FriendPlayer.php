@@ -68,19 +68,27 @@ class TotokhPlayer extends Player
 
         if ($nb_rnd % 2 == 1) //AT LEAST FRIEND INCONDITIONALLY ONCE OUT OF TWO to make him trust me,
             // and I lose nothing this way (unless hes a pigeon but this was detected previous line
-            //Social strategy because most of them are doing if he just did friend, I friend, else I enemy
+            // Social strategy because most of them are doing if he just did friend, I friend, else I enemy
             return parent::friendChoice();
         else
             return parent::foeChoice();
-
-//if he is ahead, it means he is trying to get the best of me
+        
+        /* 
+           !!!!!!!!!!
+        //BELOW is all experiences, it is dead code so that we don't go in
+           !!!!!!!!!!
+        */
+        
+        //if he is ahead, it means he is trying to get the best of me
         if ($myscore < $hisscore)
             return parent::foeChoice();
+        //analysis : it worked often but with the change of rules it is useless because foe/foe = 0
 
         //was just friend TWICE
-        //if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice())
-            //return parent::friendChoice();
-
+        if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice())
+            return parent::friendChoice();
+        //analysis : it worked for points, but was not as good as 1/1/1/1/1, where at worst I lose nothing
+        
         //else just did foe previous and globally hes not worth trusting
         return parent::foeChoice();
     }
