@@ -78,7 +78,7 @@ class TotokhPlayer extends Player
         }
 
         if ($nb_rnd % 2 == 0) //If he did foe recently, then I friend him twice out of three, because
-            // I lose nothing this way (unless he is a pigeon but this was detected line 63)
+            // I lose nothing this way (unless he is a pigeon but this was detected line 68)
             // Social strategy because most of them are doing if he just did friend, I friend, else I enemy
             return parent::foeChoice();
         else
