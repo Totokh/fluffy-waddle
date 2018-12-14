@@ -7,7 +7,7 @@ use Hackathon\Game\Result;
 /**
  * Class LovePlayer
  * @package Hackathon\PlayerIA
- * @author FlorentD
+ * @author Totokh
  */
 class TotokhPlayer extends Player
 {
