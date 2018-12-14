@@ -49,8 +49,8 @@ class TotokhPlayer extends Player
         $opp_log = $this->result->getChoicesFor($this->opponentSide);
         $stats = $this->result->getStats(); //name friend foe score; number of times N choice is made
 
-        print($nb_rnd);
-        print_r($my_log);
+        //print($nb_rnd);
+        //print_r($my_log);
         //print($stats["a"]["friend"]);
         //print($stats["a"]["foe"]);
 
