@@ -51,44 +51,64 @@ class TotokhPlayer extends Player
 
         //print($nb_rnd);
         //print_r($my_log);
+        //print_r($stats);
         //print($stats["a"]["friend"]);
         //print($stats["a"]["foe"]);
 
         //first round
-        if ($mylast == "0" || $nb_rnd == 2)
-            return parent::friendChoice();
-        //last round
-        if ($nb_rnd == 98)
+        if ($mylast == "0") // for self : <=> $nb_rnd == 0 because nb_rnd starts at 0
             return parent::foeChoice();
+        //second round and third round are always friend, because this way I have one more friend than foe most of the
+        //times (to win against the strategies of if 1/2+ foe on enemy, I foe)
+        if ($nb_rnd == 1 || $nb_rnd == 2)
+            return parent::friendChoice();
+        //mMst of my behaviour is in this cond. because you cannot define an opponent behaviour before turn 3/4
+        if ($nb_rnd > 3) {
+            // if he only does friend uptonow, then taking advantage
+            if ($stats["a"]["foe"] == 0) //($stats["a"]["friend"] > $stats["a"]["foe"])
+                return parent::foeChoice();
+            // if he did friend twice in a row, I will friend him.
+            if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice()
+                && $opp_log[$nb_rnd - 3] == $this->friendChoice())
+                return parent::foeChoice();
+            // if he did friend thrice in a row, THEN, I go unfriend to maximize my points
+            // (because it means he has a rotating strategy which does friends more than foe)
+            if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice())
+                return parent::friendChoice();
+        }
 
-        //only does friend uptonow
-        if ($stats["a"]["foe"] == 0 && $nb_rnd > 3) //($stats["a"]["friend"] > $stats["a"]["foe"])
-            return parent::foeChoice(); //PIGEON
-
-
-        if ($nb_rnd % 2 == 1) //AT LEAST FRIEND INCONDITIONALLY ONCE OUT OF TWO to make him trust me,
-            // and I lose nothing this way (unless hes a pigeon but this was detected previous line
+        if ($nb_rnd % 2 == 0) //If he did foe recently, then I friend him twice out of three, because
+            // I lose nothing this way (unless he is a pigeon but this was detected line 63)
             // Social strategy because most of them are doing if he just did friend, I friend, else I enemy
-            return parent::friendChoice();
-        else
             return parent::foeChoice();
-        
-        /* 
+        else
+            return parent::friendChoice();
+
+
+        /*
            !!!!!!!!!!
         //BELOW is all experiences, it is dead code so that we don't go in
            !!!!!!!!!!
         */
-        
+
+        //do the opposite as him
+        if ($hislast == parent::foeChoice())
+            return parent::friendChoice();
+        else
+            return parent::foeChoice();
+        //this is a bit suboptimal because it gets only 5 points out of 2 turns in most cases (fr->fo; fo->fr),
+        //below the 6 points for collaboration
+
         //if he is ahead, it means he is trying to get the best of me
         if ($myscore < $hisscore)
             return parent::foeChoice();
-        //analysis : it worked often but with the change of rules it is useless because foe/foe = 0
+        //analysis : it used to work often but with the change of rules it is useless because foe/foe = 0
 
         //was just friend TWICE
         if ($hislast == $this->friendChoice() && $opp_log[$nb_rnd - 2] == $this->friendChoice())
             return parent::friendChoice();
         //analysis : it worked for points, but was not as good as 1/1/1/1/1, where at worst I lose nothing
-        
+
         //else just did foe previous and globally hes not worth trusting
         return parent::foeChoice();
     }
